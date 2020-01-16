@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+  # Database
+  db:
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3306:3306"
+    env_file: .env
+    environment:
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=$MYSQL_DATABASE
+      - MYSQL_USER=$MYSQL_USER
+      - MYSQL_PASSWORD=$MYSQL_PASSWORD
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - backend
+  # WordPress
+  wp:
+    depends_on:
+      - db
+    image: wordpress:php7.4-fpm-alpine
+    restart: always
+    env_file: .env
+    environment:
+      - WORDPRESS_DB_HOST=db:3306
+      - WORDPRESS_DB_USER=$MYSQL_USER
+      - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
+      - WORDPRESS_DB_NAME=$MYSQL_DATABASE
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - backend
+  # Nginx
+  nginx:
+    depends_on:
+      - wp
+    image: nginx
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./nginx-conf:/etc/nginx/conf.d
+    networks:
+      - backend
+
+volumes:
+  db_data:
+
+networks:
+  backend:
+    driver: bridge
