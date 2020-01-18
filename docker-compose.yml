@@ -22,7 +22,7 @@ services:
   wp:
     depends_on:
       - db
-    image: wordpress:php7.4-fpm-alpine
+    build: .
     restart: always
     env_file: .env
     environment:
