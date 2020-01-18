@@ -3,7 +3,7 @@ version: '3'
 services:
   # Database
   db:
-    image: mysql:latest
+    image: mysql:${MYSQL_VERSION}
     restart: always
     ports:
       - "3306:3306"
@@ -11,9 +11,9 @@ services:
     environment:
       - MYSQL_ROOT_HOST=%
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=$MYSQL_DATABASE
-      - MYSQL_USER=$MYSQL_USER
-      - MYSQL_PASSWORD=$MYSQL_PASSWORD
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
     networks:
@@ -27,9 +27,9 @@ services:
     env_file: .env
     environment:
       - WORDPRESS_DB_HOST=db:3306
-      - WORDPRESS_DB_USER=$MYSQL_USER
-      - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
-      - WORDPRESS_DB_NAME=$MYSQL_DATABASE
+      - WORDPRESS_DB_USER=${MYSQL_USER}
+      - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
+      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
     volumes:
       - ./src:/var/www/html
     networks:
@@ -38,7 +38,7 @@ services:
   nginx:
     depends_on:
       - wp
-    image: nginx
+    image: nginx:alpine
     restart: always
     ports:
       - "8080:80"

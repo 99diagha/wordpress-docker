@@ -3,4 +3,5 @@
 .env
 .git
 docker-compose.yml
+dockerfile
 .dockerignore
